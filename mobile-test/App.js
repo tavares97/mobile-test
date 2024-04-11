@@ -1,20 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
 
-export default function App() {
+import { QueryClient, QueryClientProvider } from "react-query";
+
+import DetailsScreen from "./screens/Details";
+import HomeScreen from "./screens/Home";
+import { NavigationContainer } from "@react-navigation/native";
+import UsersList from "./Components/UsersList";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: true,
+    },
+  },
+});
+const Stack = createNativeStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Details"
+            component={DetailsScreen}
+            options={{ title: "User Details" }}
+          />
+          <Stack.Screen
+            name="UsersList"
+            component={UsersList}
+            options={{ title: "User List" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
